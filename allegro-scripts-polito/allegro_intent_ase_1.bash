@@ -17,7 +17,7 @@ curl -u karaf:karaf -X POST --header 'Content-Type: application/json' --header '
      "channelSpacing": "CHL_6P25GHZ",
      "gridType": "FLEX",
      "spacingMultiplier": -242,
-     "slotGranularity": 42
+     "slotGranularity": 8
    },
    "suggestedPath": {
      "links": [

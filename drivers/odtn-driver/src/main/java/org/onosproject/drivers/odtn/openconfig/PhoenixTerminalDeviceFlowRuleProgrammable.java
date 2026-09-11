@@ -51,10 +51,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.onosproject.drivers.odtn.openconfig.PegatronTerminalDeviceDiscovery.*;
+import static org.onosproject.drivers.odtn.openconfig.PegatronTerminalDeviceDiscovery.pegatronPortNumber;
 import static org.onosproject.drivers.odtn.openconfig.PhoenixTerminalDeviceDiscovery.phoenixPortName;
 import static org.onosproject.drivers.odtn.openconfig.PhoenixTerminalDeviceDiscovery.phoenixPortNumber;
 import static org.onosproject.drivers.odtn.openconfig.PhoenixTerminalDeviceDiscovery.phoenixTransceiverName;
 import static org.onosproject.drivers.odtn.openconfig.PhoenixTerminalDeviceDiscovery.phoenixOpticalChannelName;
+
 
 public class PhoenixTerminalDeviceFlowRuleProgrammable
         extends AbstractHandlerBehaviour implements FlowRuleProgrammable {
@@ -69,7 +72,7 @@ public class PhoenixTerminalDeviceFlowRuleProgrammable
 
     private static final String PREFIX_PORT = "port-";
     private static final String PREFIX_CHANNEL = "channel-";
-    private static final String DEFAULT_OPERATIONAL_MODE = "4308";
+    private static final String DEFAULT_OPERATIONAL_MODE = "2304";
     private static final String DEFAULT_TARGET_POWER = "0";
     private static final String DEFAULT_ASSIGNMENT_INDEX = "1";
     private static final String DEFAULT_ALLOCATION_INDEX = "10";
@@ -522,7 +525,7 @@ public class PhoenixTerminalDeviceFlowRuleProgrammable
 
             FlowRuleParser frp = new FlowRuleParser(rule);
 
-            String portName = phoenixPortNumber((int) frp.getPortNumber().toLong());
+            String portName = phoenixPortNumber(frp.getPortNumber().toLong());
             String transceiverName = phoenixTransceiverName(portName);
             String opticalChannelName = phoenixOpticalChannelName(portName);
 
@@ -573,14 +576,16 @@ public class PhoenixTerminalDeviceFlowRuleProgrammable
         if (rule.type == TerminalDeviceFlowRule.Type.CLIENT_INGRESS ||
                 rule.type == TerminalDeviceFlowRule.Type.CLIENT_EGRESS) {
 
+            FlowRuleParser frp = new FlowRuleParser(rule);
+
             String clientPortName;
             String linePortName;
             if (rule.type == TerminalDeviceFlowRule.Type.CLIENT_INGRESS) {
-                clientPortName = rule.inPort().toString();
-                linePortName = rule.outPort().toString();
+                clientPortName = phoenixPortNumber(frp.getInputPortNumber().toLong());
+                linePortName = phoenixPortNumber(frp.getOutputPortNumber().toLong());
             } else {
-                clientPortName = rule.outPort().toString();
-                linePortName = rule.inPort().toString();
+                clientPortName = phoenixPortNumber(frp.getOutputPortNumber().toLong());
+                linePortName = phoenixPortNumber(frp.getInputPortNumber().toLong());
             }
 
             log.info("Sending CLIENT FlowRule to device {} CLIENT port: {}, LINE port {}",
@@ -616,7 +621,7 @@ public class PhoenixTerminalDeviceFlowRuleProgrammable
                 rule.type == TerminalDeviceFlowRule.Type.LINE_EGRESS) {
 
             FlowRuleParser frp = new FlowRuleParser(rule);
-            String portName = phoenixPortNumber((int) frp.getPortNumber().toLong());
+            String portName = phoenixPortNumber(frp.getPortNumber().toLong());
 
             log.info("Removing LINE FlowRule device {} line port {}", did(), portName);
 
@@ -634,14 +639,16 @@ public class PhoenixTerminalDeviceFlowRuleProgrammable
         if (rule.type == TerminalDeviceFlowRule.Type.CLIENT_INGRESS ||
                 rule.type == TerminalDeviceFlowRule.Type.CLIENT_EGRESS) {
 
+            FlowRuleParser frp = new FlowRuleParser(rule);
+
             String clientPortName;
             String linePortName;
             if (rule.type == TerminalDeviceFlowRule.Type.CLIENT_INGRESS) {
-                clientPortName = rule.inPort().toString();
-                linePortName = rule.outPort().toString();
+                clientPortName = phoenixPortNumber(frp.getInputPortNumber().toLong());
+                linePortName = phoenixPortNumber(frp.getOutputPortNumber().toLong());
             } else {
-                clientPortName = rule.outPort().toString();
-                linePortName = rule.inPort().toString();
+                clientPortName = phoenixPortNumber(frp.getOutputPortNumber().toLong());
+                linePortName = phoenixPortNumber(frp.getInputPortNumber().toLong());
             }
 
             log.debug("Removing CLIENT FlowRule device {} client port: {}, line port {}",
