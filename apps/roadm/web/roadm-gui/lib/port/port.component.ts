@@ -23,7 +23,7 @@ import {
     SortDir, TableBaseImpl, TableResponse
 } from 'org_onosproject_onos/web/gui2-fw-lib/public_api';
 import { ActivatedRoute } from '@angular/router';
-import {FormGroup, FormControl} from '@angular/forms';
+import { FormGroup, FormControl } from '@angular/forms';
 
 /**
  * Model of the response from WebSocket
@@ -95,11 +95,11 @@ export class RoadmPortComponent extends TableBaseImpl implements OnInit, OnDestr
     deviceTip = 'Show device table';
 
     constructor(protected fs: FnService,
-                protected log: LogService,
-                protected ar: ActivatedRoute,
-                protected wss: WebSocketService,
-                protected prefs: PrefsService,
-                protected is: IconService,
+        protected log: LogService,
+        protected ar: ActivatedRoute,
+        protected wss: WebSocketService,
+        protected prefs: PrefsService,
+        protected is: IconService,
     ) {
         super(fs, log, wss, 'roadmPort');
         this.ar.queryParams.subscribe(params => {
@@ -205,7 +205,7 @@ export class RoadmPortComponent extends TableBaseImpl implements OnInit, OnDestr
 
     restoreConfigFromPrefs() {
         this.prefsState = this.prefs.asNumbers(
-            this.prefs.getPrefs('port_prefs', defaultPortPrefsState, )
+            this.prefs.getPrefs('port_prefs', defaultPortPrefsState,)
         );
 
         this.log.debug('Port - Prefs State:', this.prefsState);

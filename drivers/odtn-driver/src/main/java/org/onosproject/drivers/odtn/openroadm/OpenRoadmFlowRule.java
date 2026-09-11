@@ -26,8 +26,6 @@ import static org.onosproject.net.flow.criteria.Criterion.Type.OCH_SIGID;
 import com.google.common.base.MoreObjects;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
-
 import org.onosproject.net.OchSignal;
 import org.onosproject.net.OchSignalType;
 import org.onosproject.net.PortNumber;
@@ -62,10 +60,6 @@ public class OpenRoadmFlowRule extends DefaultFlowRule {
 
     private PortNumber outPortNumber;
 
-    private List<PortNumber> outPortNumbers;
-
-    private List<PortNumber> inPortNumbers;
-
     private OchSignal ochSignal;
 
     private OchSignalType ochSignalType;
@@ -81,7 +75,7 @@ public class OpenRoadmFlowRule extends DefaultFlowRule {
      * We store and construct attributes like interface names to support
      * this OpenROADM connection.
      */
-    public OpenRoadmFlowRule(FlowRule rule, List<PortNumber> linePorts, int index) {
+    public OpenRoadmFlowRule(FlowRule rule, List<PortNumber> linePorts) {
         super(rule);
 
         TrafficSelector trafficSelector = rule.selector();
@@ -105,15 +99,9 @@ public class OpenRoadmFlowRule extends DefaultFlowRule {
         outPortNumber = instructions.stream()
                           .filter(i -> i.type() == Instruction.Type.OUTPUT)
                           .map(i -> ((OutputInstruction) i).port())
-                          .skip(index)
                           .findFirst()
                           .orElse(null);
         checkArgument(outPortNumber != null, "Missing OUTPUT Instruction");
-
-        outPortNumbers = instructions.stream()
-                .filter(i -> i.type() == Instruction.Type.OUTPUT)
-                .map(i -> ((OutputInstruction) i).port())
-                .collect(Collectors.toList());
 
         if (linePorts.contains(inPortNumber) && linePorts.contains(outPortNumber)) {
             type = Type.EXPRESS_LINK;
@@ -147,6 +135,7 @@ public class OpenRoadmFlowRule extends DefaultFlowRule {
         return inPortNumber;
     }
 
+
     /**
      * Get the output port.
      *
@@ -154,14 +143,6 @@ public class OpenRoadmFlowRule extends DefaultFlowRule {
      */
     public PortNumber outPort() {
         return outPortNumber;
-    }
-
-    public int outPorts() {
-        return outPortNumbers.size();
-    }
-
-    public int inPorts() {
-        return inPortNumbers.size();
     }
 
 

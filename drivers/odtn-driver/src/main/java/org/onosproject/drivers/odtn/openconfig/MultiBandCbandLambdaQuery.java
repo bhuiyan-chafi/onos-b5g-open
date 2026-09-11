@@ -12,7 +12,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 public class MultiBandCbandLambdaQuery extends MultiBandLambdaQuery {
 
-    protected static final Logger log = getLogger(MultiBandCbandLambdaQuery.class);
+    protected static final Logger log = getLogger(MultiBandLambdaQuery.class);
 
     @Override
     public Set<OchSignal> queryLambdas(PortNumber port) {
@@ -20,9 +20,9 @@ public class MultiBandCbandLambdaQuery extends MultiBandLambdaQuery {
         channelSpacing = ChannelSpacing.CHL_50GHZ;
         slotGranularity = 4;
 
-        //log.info("LambdaQuery C-band: queried lambdas C for port {}", port);
+        //log.info("OPENCONFIG: queried lambdas O+C for port {}", port);
         lBandLambdaCount = 0;
-        cBandLambdaCount = 98;
+        cBandLambdaCount = 96;
         sBandLambdaCount = 0;
         oBandLambdaCount = 0;
 

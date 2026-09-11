@@ -22,12 +22,15 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.karaf.shell.api.action.Argument;
 import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.Completion;
-import org.apache.karaf.shell.api.action.lifecycle.Service;
 import org.apache.karaf.shell.api.action.Option;
-import org.onosproject.utils.Comparators;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 import org.onosproject.net.Device;
 import org.onosproject.net.Port;
+// === Added: PortNumber import for single-port lookup
+import org.onosproject.net.PortNumber;
 import org.onosproject.net.device.DeviceService;
+import org.onosproject.utils.Comparators;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -36,10 +39,13 @@ import static org.onosproject.net.DeviceId.deviceId;
 
 /**
  * Lists all ports or all ports of a device.
+ * Strict mode:
+ *   - Single-port filter requires: ports <deviceId> -p <port> | --port <port>
+ *   - Free-form tokens like "port=11003" are rejected with usage.
  */
 @Service
 @Command(scope = "onos", name = "ports",
-         description = "Lists all ports or all ports of a device")
+        description = "Lists all ports or all ports of a device")
 public class DevicePortsListCommand extends DevicesListCommand {
 
     private static final String FMT = "  port=%s, state=%s, type=%s, speed=%s %s";
@@ -53,15 +59,34 @@ public class DevicePortsListCommand extends DevicesListCommand {
             required = false, multiValued = false)
     private boolean disabled = false;
 
+    // === Added: strict single-port filter option
+    @Option(name = "-p", aliases = "--port", description = "Filter to a single port number (options must precede the device URI). Example: ports -p 11003 <uri>",
+    required = false, multiValued = false)
+    private String portFilter;
+
     @Argument(index = 0, name = "uri", description = "Device ID",
-              required = false, multiValued = false)
+            required = false, multiValued = false)
     @Completion(DeviceIdCompleter.class)
     protected String uri = null;
 
     @Override
     protected void doExecute() {
         DeviceService service = get(DeviceService.class);
+
+        // === Added: require URI when using -p/--port
+        if (portFilter != null && uri == null) {
+            error("Port filter requires a device URI.");
+            printUsage();
+            return;
+        }
+
         if (uri == null) {
+            // No URI provided: list all devices and their ports (no single-port filtering here)
+            if (portFilter != null) {
+                error("Port filter cannot be used without specifying a device URI.");
+                printUsage();
+                return;
+            }
             if (outputJson()) {
                 print("%s", jsonPorts(service, getSortedDevices(service)));
             } else {
@@ -70,17 +95,20 @@ public class DevicePortsListCommand extends DevicesListCommand {
                     printPorts(service, device);
                 }
             }
+            return;
+        }
 
+        Device device = service.getDevice(deviceId(uri));
+        if (device == null) {
+            error("No such device %s", uri);
+            return;
+        }
+
+        if (outputJson()) {
+            print("%s", jsonPorts(service, new ObjectMapper(), device));
         } else {
-            Device device = service.getDevice(deviceId(uri));
-            if (device == null) {
-                error("No such device %s", uri);
-            } else if (outputJson()) {
-                print("%s", jsonPorts(service, new ObjectMapper(), device));
-            } else {
-                printDevice(service, device);
-                printPorts(service, device);
-            }
+            printDevice(service, device);
+            printPorts(service, device);
         }
     }
 
@@ -105,46 +133,108 @@ public class DevicePortsListCommand extends DevicesListCommand {
      *
      * @param service device service
      * @param mapper  object mapper
-     * @param device  infrastructure devices
+     * @param device  infrastructure device
      * @return JSON array
      */
     public JsonNode jsonPorts(DeviceService service, ObjectMapper mapper, Device device) {
         ObjectNode result = mapper.createObjectNode();
         ArrayNode ports = mapper.createArrayNode();
-        for (Port port : service.getPorts(device.id())) {
-            if (isIncluded(port)) {
-                ports.add(mapper.createObjectNode()
-                                  .put("element", device.id().toString())
-                                  .put("port", port.number().toString())
-                                  .put("isEnabled", port.isEnabled())
-                                  .put("type", port.type().toString().toLowerCase())
-                                  .put("portSpeed", port.portSpeed())
-                                  .set("annotations", annotations(mapper, port.annotations())));
+
+        // === Added: strict single-port path when -p/--port is present
+        if (portFilter != null) {
+            PortNumber pn = safePortNumber(portFilter);
+            if (pn == null) {
+                error("Invalid port number: %s", portFilter);
+                printUsage();
+                // keep device context; ports array stays empty
+            } else {
+                Port port = service.getPort(device.id(), pn);
+                if (port != null && isIncluded(port)) {
+                    ports.add(portNode(mapper, device, port));
+                }
+            }
+        } else {
+            for (Port port : service.getPorts(device.id())) {
+                if (isIncluded(port)) {
+                    ports.add(portNode(mapper, device, port));
+                }
             }
         }
+
         result.set("device", jsonForEntity(device, Device.class));
         result.set("ports", ports);
         return result;
     }
 
+    // === Added: helper to build a single port JSON node
+    private ObjectNode portNode(ObjectMapper mapper, Device device, Port port) {
+        return mapper.createObjectNode()
+                .put("element", device.id().toString())
+                .put("port", port.number().toString())
+                .put("isEnabled", port.isEnabled())
+                .put("type", port.type().toString().toLowerCase())
+                .put("portSpeed", port.portSpeed())
+                .set("annotations", annotations(mapper, port.annotations()));
+    }
+
     // Determines if a port should be included in output.
     protected boolean isIncluded(Port port) {
-        return enabled && port.isEnabled() || disabled && !port.isEnabled() ||
-                !enabled && !disabled;
+        // status filter only; single-port filter handled explicitly
+        return (enabled && port.isEnabled()) ||
+               (disabled && !port.isEnabled()) ||
+               (!enabled && !disabled);
     }
 
     protected void printPorts(DeviceService service, Device device) {
+        // === Added: strict single-port path when -p/--port is present
+        if (portFilter != null) {
+            PortNumber pn = safePortNumber(portFilter);
+            if (pn == null) {
+                error("Invalid port number: %s", portFilter);
+                printUsage();
+                return;
+            }
+            Port port = service.getPort(device.id(), pn);
+            if (port != null && isIncluded(port)) {
+                printPortLine(port);
+            }
+            return;
+        }
+
         List<Port> ports = new ArrayList<>(service.getPorts(device.id()));
         Collections.sort(ports, Comparators.PORT_COMPARATOR);
         for (Port port : ports) {
             if (!isIncluded(port)) {
                 continue;
             }
-            String portName = port.number().toString();
-            Object portIsEnabled = port.isEnabled() ? "enabled" : "disabled";
-            String portType = port.type().toString().toLowerCase();
-            String annotations = annotations(port.annotations());
-            print(FMT, portName, portIsEnabled, portType, port.portSpeed(), annotations);
+            printPortLine(port);
         }
+    }
+
+    // === Added: formatted single-line printer
+    private void printPortLine(Port port) {
+        String portName = port.number().toString();
+        Object portIsEnabled = port.isEnabled() ? "enabled" : "disabled";
+        String portType = port.type().toString().toLowerCase();
+        String anns = annotations(port.annotations());
+        print(FMT, portName, portIsEnabled, portType, port.portSpeed(), anns);
+    }
+
+    // === Added: safe parse helper for PortNumber
+    private PortNumber safePortNumber(String s) {
+        try {
+            return PortNumber.fromString(s);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private void printUsage() {
+        print("Usage (options must come before the deviceId):");
+        print("  ports [-e|--enabled] [-d|--disabled] [-p|--port <portNumber>] <deviceId>");
+        print("Examples:");
+        print("  ports netconf:10.100.101.21:2022");
+        print("  ports -p 11003 netconf:10.100.101.21:2022");
+        print("  ports --port 11003 netconf:10.100.101.21:2022");
     }
 }

@@ -1,158 +1,91 @@
-# ONOS : Open Network Operating System
-
+# ONOS: Open Network Operating System
 
 ## What is ONOS?
-ONOS is the only SDN controller platform that supports the transition from
-legacy “brown field” networks to SDN “green field” networks. This enables
-exciting new capabilities, and disruptive deployment and operational cost points
-for network operators.
+
+ONOS is the only SDN controller platform that supports the transition from legacy “brown field” networks to SDN “green field” networks. This enables exciting new capabilities, and disruptive deployment and operational cost points for network operators.
 
 ## Top-Level Features
 
-* High availability through clustering and distributed state management.
-* Scalability through clustering and sharding of network device control.
-* Performance that is good for a first release, and which has an architecture
-  that will continue to support improvements.
-* Northbound abstractions for a global network view, network graph, and
-  application intents.
-* Pluggable southbound for support of OpenFlow, P4Runtime, and new or legacy
-  protocols.
-* Graphical user interface to view multi-layer topologies and inspect elements
-  of the topology.
-* REST API for access to Northbound abstractions as well as CLI commands.
-* CLI for debugging.
-* Support for both proactive and reactive flow setup.
-* SDN-IP application to support interworking with traditional IP networks
-  controlled by distributed routing protocols such as BGP.
-* IP-Optical use case demonstration.
+- High availability through clustering and distributed state management.
+- Scalability through clustering and sharding of network device control.
+- Performance that is good for a first release, and which has an architecture that will continue to support improvements.
+- Northbound abstractions for a global network view, network graph, and application intents.
+- Pluggable southbound for support of OpenFlow, P4Runtime, and new or legacy protocols.
+- Graphical user interface to view multi-layer topologies and inspect elements of the topology.
+- REST API for access to Northbound abstractions as well as CLI commands.
+- CLI for debugging.
+- Support for both proactive and reactive flow setup.
+- SDN-IP application to support interworking with traditional IP networks controlled by distributed routing protocols such as BGP.
+- IP-Optical use case demonstration.
 
+---
 
-## Getting started
+## About This Fork
 
-### Dependencies
+This repository is a fork of the original **Open Network Operating System (ONOS)** controller originally developed and maintained by the **Open Networking Foundation (ONF)**.
 
-The following packages are required:
+### Upstream Repository Status
 
-* git
-* zip
-* curl
-* unzip
-* python3 (needed by Bazel)
-
-### Build ONOS from source
-
-ONOS is built with [Bazel](https://bazel.build/), an open-source build tool
-developed by Google. We suggest downloading and installing Bazel using the
-[official instructions](https://docs.bazel.build/versions/master/install.html).
-
-The minimum required Bazel version is 1.0.0
-
-1. Clone the code from the ONOS Gerrit repository
-```bash
-$ git clone https://gerrit.onosproject.org/onos
-```
-
-2. Optionally, you can add the ONOS developer environment to your bash profile.
-   This will provide access to a number of handy commands to run, test and debug
-   ONOS. No need to do this step again if you had done this before:
-```bash
-$ cd onos
-$ cat << EOF >> ~/.bash_profile
-export ONOS_ROOT="`pwd`"
-source $ONOS_ROOT/tools/dev/bash_profile
-EOF
-$ . ~/.bash_profile
-```
-
-3. Build ONOS with Bazel
-```bash
-$ cd $ONOS_ROOT
-$ bazel build onos
-```
-
-### Start ONOS on local machine
-
-To run ONOS locally on the development machine, simply run the following command:
+The original official upstream repository previously cloned via:
 
 ```bash
-$ bazel run onos-local [-- [clean] [debug]]
+git clone https://gerrit.onosproject.org/onos
 ```
 
-Or simpler one, if you have added the ONOS developer environment to your bash
-profile:
+is no longer available or actively maintained.
 
-```bash
-$ ok [clean] [debug]
-```
+### Motivation and Maintenance
 
-The above command will create a local installation from the ONOS tarbal
-(re-building if necessary) and will start the ONOS server in the background. In
-the foreground, it will display a continuous view of the ONOS (Apache Karaf) log
-file. Options following the double-dash (–) are passed through to the ONOS
-Apache Karaf and can be omitted. Here, the `clean` option forces a clean
-installation, removing any state from previous executions. The `debug` option
-means that the default debug port 5005 will be available for attaching a remote
-debugger.
+This fork is maintained for **educational and research purposes** by [Alessio Giorgetti](https://github.com/alessiocnit), an active contributor to the official upstream ONOS repository (with contributions including optical network extensions and ODTN drivers). The goal of this project is to keep ONOS accessible, buildable on modern environments, and ready for use in SDN labs, experiments, and research.
 
-### Interacting with ONOS
+### References
 
-To access ONOS UI, use a browser to open:
+- **Open Networking Foundation (ONF)**: [https://opennetworking.org/](https://opennetworking.org/)
+- **Upstream GitHub Mirror (Archive)**: [https://github.com/opennetworkinglab/onos](https://github.com/opennetworkinglab/onos)
+- **ONOS Architecture Whitepaper**: [ONOS Architecture (PDF)](https://stordis.com/wp-content/uploads/2019/05/Whitepaper-ONOS.pdf)
 
-[http://localhost:8181/onos/ui](http://localhost:8181/onos/ui)
+---
 
-Or simpler, use the `onos-gui localhost` command.
+## Documentation
 
-The default username and password is `onos`/`rocks`.
+An archived and searchable version of the official ONOS Classic documentation and wiki is maintained at:
 
-To attach to the ONOS CLI console, run:
+- **ONOS Classic Wiki**: [https://andrea-campanella.github.io/onos-classic-wiki/](https://andrea-campanella.github.io/onos-classic-wiki/)
 
-```bash
-$ onos localhost
-```
+---
 
-### Unit Tests
+## Getting Started: Installing ONOS
 
-To run ONOS unit tests, including code Checkstyle validation, run the following
-command:
+Choose one of the following installation methods to get started:
 
-```bash
-$ bazel query 'tests(//...)' | xargs bazel test
-```
+- **Build from source**: follow the [From Source Guide](./docs/FROM_SOURCE.md).
+- **Run with Docker Hub**: follow the [Docker Hub Guide](./docs/FROM_DOCKER_HUB.md).
+- **Run with Kathará**: follow the [Kathará + ONOS Guide](./docs/katharaXonos/FROM_KATHARA_CORE.md).
 
-Or better yet, to run code Checkstyle and all unit tests use the following
-convenience alias:
+---
 
-```bash
-$ ot
-```
+## Maintainer
 
-## Contributing
+- **Alessio Giorgetti**
+  - Role: Associate Professor
+  - Affiliation: Department of Information Engineering (Dipartimento di Ingegneria dell'Informazione), University of Pisa, Pisa, Italy
+  - GitHub: [@alessiocnit](https://github.com/alessiocnit)
 
-ONOS code is hosted and maintained using [Gerrit](https://gerrit.onosproject.org/).
+### Lab Activities
 
-Code on GitHub is only a mirror. The ONOS project does **NOT** accept code
-through pull requests on GitHub.
+- **ASM CHAFIULLAH BHUIYAN**
+  - Role: Research Fellow
+  - Affiliation: University of Pisa, Pisa, Italy
 
-To contribute to ONOS, please refer to [Sample Gerrit
-Workflow](https://wiki.onosproject.org/display/ONOS/Sample+Gerrit+Workflow). It
-should include most of the things you'll need to get your contribution started!
+---
 
-## More information
+## Official License
 
-For more information, please check out our wiki page or mailing lists:
+ONOS (Open Network Operating System) is published under the [Apache License 2.0](LICENSE.txt).
 
-* [Wiki](https://wiki.onosproject.org/)
-* [Google group](https://groups.google.com/a/onosproject.org/forum/#!forum/onos-dev)
-* [Slack](https://onosproject.slack.com)
+## Official Acknowledgements
 
-## License
-
-ONOS (Open Network Operating System) is published under [Apache License
-2.0](https://github.com/opennetworkinglab/onos/blob/master/LICENSE.txt)
-
-## Acknowledgements
-YourKit supports open source projects with innovative and intelligent tools
-for monitoring and profiling Java and .NET applications.
+YourKit supports open source projects with innovative and intelligent tools for monitoring and profiling Java and .NET applications.
 YourKit is the creator of [YourKit Java Profiler](https://www.yourkit.com/java/profiler/), [YourKit .NET Profiler](https://www.yourkit.com/.net/profiler/) and [YourKit YouMonitor](https://www.yourkit.com/youmonitor/).
 
 ![YourKit](https://www.yourkit.com/images/yklogo.png)

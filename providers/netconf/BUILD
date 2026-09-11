@@ -1,5 +1,5 @@
 BUNDLES = [
-    "@sshd_osgi//jar",
+    "@sshd_core//jar",
     "@jaxb_api//jar",
     "//providers/netconf/device:onos-providers-netconf-device",
     "//providers/netconf/alarm:onos-providers-netconf-alarm",

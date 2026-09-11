@@ -181,7 +181,7 @@ public class OpenRoadmFlowRuleProgrammable
         List<FlowRule> added = new ArrayList<>();
         for (FlowRule r : rules) {
             openRoadmLog("TO APPLY RULE {}", r);
-            OpenRoadmFlowRule xc = new OpenRoadmFlowRule(r, getLinePorts(),0);
+            OpenRoadmFlowRule xc = new OpenRoadmFlowRule(r, getLinePorts());
             openRoadmInfo("OpenRoadmRule {}", xc);
             if (editConfigCreateConnection(xc)) {
                 added.add(xc);
@@ -202,7 +202,7 @@ public class OpenRoadmFlowRuleProgrammable
     public Collection<FlowRule> removeFlowRules(Collection<FlowRule> rules) {
         List<FlowRule> removed = new ArrayList<>();
         for (FlowRule r : rules) {
-            OpenRoadmFlowRule xc = new OpenRoadmFlowRule(r, getLinePorts(),0);
+            OpenRoadmFlowRule xc = new OpenRoadmFlowRule(r, getLinePorts());
             openRoadmLog("TO REMOVE RULE {}", xc);
             if (editConfigDeleteConnection(xc)) {
                 removed.add(r);

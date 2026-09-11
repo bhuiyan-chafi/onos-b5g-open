@@ -1,2 +1,0 @@
-bazel build onos --action_env=HTTP_PROXY=$HTTP_PROXY
-

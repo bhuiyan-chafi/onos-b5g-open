@@ -461,19 +461,17 @@ public class PhoenixTerminalDeviceDiscovery
         describedOpModes = discoverOperationalModes();
 
         //Only add in the store the actually supported operational modes
-        if (describedOpModes != null) {
-            for (OcOperationalMode mode : describedOpModes) {
-                if (supportedOpModeIds.contains(mode.modeId)) {
+        for (OcOperationalMode mode : describedOpModes) {
+            if (supportedOpModeIds.contains(mode.modeId)) {
 
-                    //If the opmode is already present in the database only update list of supporting devices
-                    //Otherwise register a new opmode
-                    if (modesManager.isRegisteredMode(mode.modeId)) {
-                        modesManager.getFromDatabase(mode.modeId).supportingDevices.add(did());
-                    } else {
-                        log.info("ADDING SUPPORTED DEVICES opmode {} device {}", mode.modeId, did());
-                        mode.supportingDevices.add(did());
-                        modesManager.addToDatabase(mode);
-                    }
+                //If the opmode is already present in the database only update list of supporting devices
+                //Otherwise register a new opmode
+                if (modesManager.isRegisteredMode(mode.modeId)) {
+                    modesManager.getFromDatabase(mode.modeId).supportingDevices.add(did());
+                } else {
+                    log.info("ADDING SUPPORTED DEVICES opmode {} device {}", mode.modeId, did());
+                    mode.supportingDevices.add(did());
+                    modesManager.addToDatabase(mode);
                 }
             }
         }
@@ -651,13 +649,13 @@ public class PhoenixTerminalDeviceDiscovery
         Map<String, String> annotations = new HashMap<>();
         String name = component.getString("name");
         String type = component.getString("port/optical-port/state/optical-port-type");
-        String empty = component.getString("state/empty");
+        String status = component.getString("state/oper-status");
 
         log.info("Parsing Component {} type {}", name, type);
 
         annotations.put(OdtnDeviceDescriptionDiscovery.OC_NAME, name);
         annotations.put(OdtnDeviceDescriptionDiscovery.OC_TYPE, type);
-        annotations.put(OdtnDeviceDescriptionDiscovery.OC_STATUS, "empty-" + empty);
+        annotations.put(OdtnDeviceDescriptionDiscovery.OC_STATUS, status);
         annotations.put(OC_TRANSCEIVER_NAME, phoenixTransceiverName(name));
         annotations.put(OC_OPTICAL_CHANNEL_NAME, phoenixOpticalChannelName(name));
 
@@ -677,9 +675,8 @@ public class PhoenixTerminalDeviceDiscovery
             }
         }
 
-        //Only consider ports filled with a transceiver
         Boolean isEnabled = false;
-        if (empty.equals("false")) {
+        if (status.equals(OC_PLATFORM_TYPES_ACTIVE)) {
             isEnabled = true;
         }
 
@@ -733,7 +730,7 @@ public class PhoenixTerminalDeviceDiscovery
         return PortNumber.portNumber(portIndex);
     }
 
-    protected static String phoenixPortNumber(Long value) {
+    protected static String phoenixPortNumber(int value) {
         if (value >= 100 && value < 200) {
             return "cfp2-" + (value - 100);
         } else if (value >= 1000 && value < 1100) {
@@ -836,16 +833,11 @@ public class PhoenixTerminalDeviceDiscovery
 
             log.debug("REPLY OP_MODES {}", rpcReply);
 
-            if (rpcReply.contains("operational-modes")) {
-                XMLConfiguration xconf = (XMLConfiguration) XmlConfigParser.loadXmlString(rpcReply);
-                xconf.setExpressionEngine(xpe);
+            XMLConfiguration xconf = (XMLConfiguration) XmlConfigParser.loadXmlString(rpcReply);
+            xconf.setExpressionEngine(xpe);
 
-                HierarchicalConfiguration modes = xconf.configurationAt("data/operational-modes");
-                return parseOperationalModes(modes);
-            } else {
-                log.error("There is no description of operational modes {}", did());
-                return null;
-            }
+            HierarchicalConfiguration modes = xconf.configurationAt("data/operational-modes");
+            return parseOperationalModes(modes);
         } catch (Exception e) {
             log.error("Exception discoverOperationalModes() {}", did(), e);
             //return ImmutableList.of();

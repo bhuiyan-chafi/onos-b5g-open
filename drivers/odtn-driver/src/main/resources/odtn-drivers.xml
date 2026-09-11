@@ -66,20 +66,7 @@
         <behaviour api="org.onosproject.net.flow.FlowRuleProgrammable"
                    impl="org.onosproject.drivers.odtn.openconfig.PhoenixTerminalDeviceFlowRuleProgrammable"/>
         <behaviour api ="org.onosproject.net.behaviour.LambdaQuery"
-                   impl="org.onosproject.drivers.odtn.openconfig.MultiBandCbandLambdaQuery"/>
-        <behaviour api="org.onosproject.net.behaviour.InternalConnectivity"
-                   impl="org.onosproject.drivers.odtn.FullMeshInternalConnectivity"/>
-    </driver>
-
-    <driver name="pegatron-nec-3.1.25"  manufacturer="CNIT" hwVersion="" swVersion="">
-        <behaviour api="org.onosproject.net.device.DeviceDescriptionDiscovery"
-                   impl="org.onosproject.drivers.odtn.openconfig.PegatronTerminalDeviceDiscovery"/>
-        <behaviour api ="org.onosproject.net.optical.OpticalDevice"
-                   impl="org.onosproject.net.optical.DefaultOpticalDevice"/>
-        <behaviour api="org.onosproject.net.flow.FlowRuleProgrammable"
-                   impl="org.onosproject.drivers.odtn.openconfig.PegatronTerminalDeviceFlowRuleProgrammable"/>
-        <behaviour api ="org.onosproject.net.behaviour.LambdaQuery"
-                   impl="org.onosproject.drivers.odtn.openconfig.MultiBandCbandLambdaQuery"/>
+                   impl="org.onosproject.drivers.odtn.openconfig.MultiBand10LambdaQuery"/>
         <behaviour api="org.onosproject.net.behaviour.InternalConnectivity"
                    impl="org.onosproject.drivers.odtn.FullMeshInternalConnectivity"/>
     </driver>
@@ -126,17 +113,6 @@
                    impl="org.onosproject.drivers.odtn.openroadm.OpenRoadmDeviceDescription12"/>
         <behaviour api="org.onosproject.net.flow.FlowRuleProgrammable"
                    impl="org.onosproject.drivers.odtn.openroadm.OpenRoadmFlowRuleProgrammable12"/>
-        <behaviour api ="org.onosproject.net.behaviour.LambdaQuery"
-                   impl="org.onosproject.drivers.odtn.openconfig.MultiBandCbandLambdaQuery"/>
-        <behaviour api ="org.onosproject.net.optical.OpticalDevice"
-                   impl="org.onosproject.net.optical.DefaultOpticalDevice"/>
-    </driver>
-
-    <driver name="openroadmP2MP" extends="" manufacturer="CTTC/CNIT" hwVersion="0.0.1" swVersion="0.0.1">
-        <behaviour api ="org.onosproject.net.device.DeviceDescriptionDiscovery"
-                   impl="org.onosproject.drivers.odtn.openroadm.OpenRoadmDeviceDescription12"/>
-        <behaviour api="org.onosproject.net.flow.FlowRuleProgrammable"
-                   impl="org.onosproject.drivers.odtn.openroadm.OpenRoadmFlowRuleProgrammableP2MP"/>
         <behaviour api ="org.onosproject.net.behaviour.LambdaQuery"
                    impl="org.onosproject.drivers.odtn.openconfig.MultiBandCbandLambdaQuery"/>
         <behaviour api ="org.onosproject.net.optical.OpticalDevice"

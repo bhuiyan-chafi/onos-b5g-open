@@ -456,8 +456,7 @@ public class NetconfDeviceProvider extends AbstractProvider
                                                         TimeUnit.SECONDS);
     }
 
-    /* Connecting devices with initial config. This will keep on retrying infinitely for all devices which are not
-    connecting with ONOS. To stop retry, please remove device from netcfg*/
+    /* Connecting devices with initial config. This will keep on retrying infinitely for all devices which are not connecting with ONOS. To stop retry, please remove device from netcfg*/
     private void connectDevices() {
         Set<DeviceId> deviceSubjects = cfgService.getSubjects(DeviceId.class, NetconfDeviceConfig.class);
         deviceSubjects.parallelStream().filter(deviceId -> !deviceService.isAvailable(deviceId)).forEach(deviceId -> {

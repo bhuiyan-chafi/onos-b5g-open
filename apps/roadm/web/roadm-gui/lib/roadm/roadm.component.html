@@ -20,26 +20,31 @@
         <div class="ctrl-btns">
             <div class="refresh" (click)="toggleRefresh()">
                 <!-- See icon.theme.css for the defintions of the classes active and refresh-->
-                <onos-icon classes="{{ autoRefresh?'active refresh':'refresh' }}" iconId="refresh" iconSize="42" toolTip="{{ autoRefreshTip }}"></onos-icon>
+                <onos-icon classes="{{ autoRefresh?'active refresh':'refresh' }}" iconId="refresh" iconSize="42"
+                    toolTip="{{ autoRefreshTip }}"></onos-icon>
             </div>
             <div class="separator"></div>
 
             <!--<div>-->
-                <!--<onos-icon classes="{{ selId ? 'current-view':undefined }}" iconId="deviceTable" iconSize="42"></onos-icon>-->
+            <!--<onos-icon classes="{{ selId ? 'current-view':undefined }}" iconId="deviceTable" iconSize="42"></onos-icon>-->
             <!--</div>-->
 
             <!--<div (click)="navto('/flow')">-->
-                <!--<onos-icon classes="{{ selId ? 'active-rect' :undefined}}" iconId="flowTable" iconSize="42" toolTip="{{ flowTip }}"></onos-icon>-->
+            <!--<onos-icon classes="{{ selId ? 'active-rect' :undefined}}" iconId="flowTable" iconSize="42" toolTip="{{ flowTip }}"></onos-icon>-->
             <!--</div>-->
 
             <div (click)="navto('/roadm-gui/roadm-port-gui')">
-                <onos-icon classes="{{ selId ? 'active-rect' :undefined}}" iconId="portTable" iconSize="42" toolTip="{{ portTip }}"></onos-icon>
+                <onos-icon classes="{{ selId ? 'active-rect' :undefined}}" iconId="portTable" iconSize="42"
+                    toolTip="{{ portTip }}"></onos-icon>
             </div>
 
         </div>
         <div class="search">
-            <input id="searchinput" [(ngModel)]="tableDataFilter.queryStr" type="search" #search placeholder="Search" />
-            <select [(ngModel)]="tableDataFilter.queryBy">
+            <input id="searchinput" [(ngModel)]="tableDataFilter.queryStr" type="search" #search placeholder="Search"
+                style="width: 20%;padding: 10px 12px; margin-right: 5px;
+            font-size: 14px; color:black; border: 1px solid gray; border-radius: 10px;" />
+            <select [(ngModel)]="tableDataFilter.queryBy"
+                style="width: 20%;padding: 10px 12px; margin-right: 5px; font-size: 14px; color:black; border: 1px solid gray; border-radius: 10px;">
                 <option value="" disabled>Search By</option>
                 <option value="$">All Fields</option>
                 <option value="id">Device-Id</option>
@@ -53,8 +58,6 @@
         <div class="table-header">
             <table>
                 <tr>
-                    <td colId="available" class="table-icon"></td>
-                    <td colId="type" class="table-icon"></td>
                     <td colId="name">Friendly Name</td>
                     <td colId="id">Device ID</td>
                     <td colId="master" [ngClass]="{width: '130px'}">Master</td>
@@ -72,13 +75,8 @@
                 <tr class="table-body" *ngIf="tableData.length === 0" class="no-data">
                     <td colspan="9">{{ annots.noRowsMsg }}</td>
                 </tr>
-                <tr *ngFor="let dev of tableData | filter : tableDataFilter" (click)="selectCallback($event, dev)" [ngClass]="{selected: dev.id === selId, 'data-change': isChanged(dev.id)}">
-                    <td class="table-icon">
-                        <onos-icon classes="{{ dev._iconid_available}}" iconId={{dev._iconid_available}}></onos-icon>
-                    </td>
-                    <td class="table-icon">
-                        <onos-icon classes="{{dev._iconid_type? 'active-type':undefined}}" iconId="{{dev._iconid_type}}"></onos-icon>
-                    </td>
+                <tr *ngFor="let dev of tableData | filter : tableDataFilter" (click)="selectCallback($event, dev)"
+                    [ngClass]="{selected: dev.id === selId, 'data-change': isChanged(dev.id)}">
                     <td>{{ dev.name }}</td>
                     <td>{{ dev.id }}</td>
                     <td>{{ dev.master }}</td>
