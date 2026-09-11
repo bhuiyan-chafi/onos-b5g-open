@@ -21,7 +21,7 @@ bucklets/plugins/
 .watchmanconfig
 .vscode
 *.fxs
-
+.github/
 /roadm-base/
 /bin/
 lib/yang
