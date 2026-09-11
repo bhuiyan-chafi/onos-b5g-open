@@ -18,6 +18,8 @@ ONOS is the only SDN controller platform that supports the transition from legac
 - SDN-IP application to support interworking with traditional IP networks controlled by distributed routing protocols such as BGP.
 - IP-Optical use case demonstration.
 
+For the final official version please switch to `master` branch.
+
 ---
 
 ## About This Fork
