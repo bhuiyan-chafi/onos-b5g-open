@@ -36,9 +36,9 @@ git clone https://gerrit.onosproject.org/onos
 
 is no longer available or actively maintained.
 
-### Motivation and Maintenance
+### Motivation behind the fork
 
-This fork is maintained for **educational and research purposes** by [Alessio Giorgetti](https://github.com/alessiocnit), an active contributor to the official upstream ONOS repository (with contributions including optical network extensions and ODTN drivers). The goal of this project is to keep ONOS accessible, buildable on modern environments, and ready for use in SDN labs, experiments, and research.
+This fork is going to be maintained for **educational and research purposes** by [Alessio Giorgetti](https://github.com/alessiocnit), an active contributor to the official upstream ONOS repository (with contributions including optical network extensions and ODTN drivers). The goal of this project is to keep ONOS accessible, buildable on modern environments, and ready for use in SDN labs, experiments, and research.
 
 ### References
 
@@ -66,7 +66,7 @@ Choose one of the following installation methods to get started:
 
 ---
 
-## Maintainer
+## Contributor
 
 - **Alessio Giorgetti**
   - Role: Associate Professor
