@@ -37,7 +37,7 @@ RUN echo "source \$ONOS_ROOT/tools/dev/bash_profile" >> /root/.bashrc
 RUN mkdir -p /root/.ssh && echo "Host *\n  Port 8101\n  User onos" > /root/.ssh/config && chmod 600 /root/.ssh/config
 
 # Clone the custom ONOS repository (dev branch)
-RUN git clone https://github.com/alessiocnit/onos-classic.git $ONOS_ROOT
+RUN git clone https://github.com/bhuiyan-chafi/onos-classic $ONOS_ROOT
 
 # Set the working directory
 WORKDIR $ONOS_ROOT
